@@ -1,0 +1,7 @@
+[versions]
+kotlin-jvm-ver = "2.0.21"
+shadow-ver = "8.3.3"
+
+[libraries]
+kotlin-jvm = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin-jvm-ver" }
+shadow = { module = "com.gradleup.shadow:shadow-gradle-plugin", version.ref = "shadow-ver" }
