@@ -31,9 +31,16 @@ class PineappleKitPlugin : Plugin<Project> {
             dependencies {
                 val compileOnly = configurations.getByName("compileOnly")
                 val implementation = configurations.getByName("implementation")
-                compileOnly(SPIGOT_DEPENDENCY_PATTERN.format(extension.spigotVersion.get()))
-                for (pineappleModule in extension.modules.get()) {
-                    implementation(PINEAPPLE_DEPENDENCY_PATTERN.format(pineappleModule.name, pineappleModule.version))
+                if (extension.spigotVersion.orNull != null) {
+                    compileOnly(SPIGOT_DEPENDENCY_PATTERN.format(extension.spigotVersion.get()))
+                    for (pineappleModule in extension.modules.get()) {
+                        implementation(
+                            PINEAPPLE_DEPENDENCY_PATTERN.format(
+                                pineappleModule.name,
+                                pineappleModule.version
+                            )
+                        )
+                    }
                 }
             }
 
@@ -41,12 +48,16 @@ class PineappleKitPlugin : Plugin<Project> {
                 archiveClassifier = ""
                 archiveVersion = ""
                 archiveFileName = "${project.name}-${project.version}.jar"
-                relocate("sh.miles.pineapple.", "${extension.mainPackage.get()}.libs.pineapple.")
+                if (extension.mainPackage.orNull != null) {
+                    relocate("sh.miles.pineapple.", "${extension.mainPackage.get()}.libs.pineapple.")
+                }
 
-                for (pineappleModule in extension.modules.get()) {
-                    val pattern = pineappleModule.exclusionPattern
-                    if (pattern.isNotEmpty()) {
-                        pattern.forEach(::exclude)
+                if (extension.modules.orNull != null) {
+                    for (pineappleModule in extension.modules.get()) {
+                        val pattern = pineappleModule.exclusionPattern
+                        if (pattern.isNotEmpty()) {
+                            pattern.forEach({ exclude("${it.replace(".", "/")}/**") })
+                        }
                     }
                 }
             }
